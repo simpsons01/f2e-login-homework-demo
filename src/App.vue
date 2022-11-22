@@ -57,7 +57,7 @@ provide("alert", {
         </div>
         <div class="flex-auto flex flex-row-reverse">
           <div class="flex-initial flex items-center">
-            <router-link class="block" to="/user">
+            <router-link class="block" to="/account">
               <user-circle-icon class="h-12 w-12" />
             </router-link>
           </div>

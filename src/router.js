@@ -5,7 +5,8 @@ import Register from "./page/Register.vue"
 
 const routes = [
   {
-    path: "/account",
+    path: "/",
+    alias: "/account",
     name: "account",
     component: Account
   },
