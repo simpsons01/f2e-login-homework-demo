@@ -22,6 +22,7 @@ const isPasswordDisplay = ref(false);
         p-10
         mx-auto
         -translate-y-[4rem]
+        md:-translate-y-[1rem]
       "
     >
       <div class="flex">
