@@ -45,7 +45,7 @@ const form = reactive({
                 <div v-else>
                   <form-text-input
                     class="mr-2"
-                    label="新密碼"
+                    placeholder="請輸入新密碼"
                     v-model="form.password"
                   />
                 </div>

@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "@vue/reactivity";
 import { defineProps, defineEmits, ref } from "vue";
 
 const isFocus = ref(false);
@@ -25,7 +26,9 @@ const props = defineProps({
   },
   label: {
     type: String,
-    required: true,
+  },
+  placeholder: {
+    type: String,
   },
   modelValue: {
     type: String,
@@ -34,6 +37,19 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["update:modelValue"]);
+
+const calcPlaceholder = computed(() => {
+  const { placeholder, label } = props;
+  if (label) {
+    if (isFocus.value) {
+      return placeholder;
+    } else {
+      return "";
+    }
+  } else {
+    return placeholder;
+  }
+});
 </script>
 
 <template>
@@ -41,8 +57,9 @@ const emit = defineEmits(["update:modelValue"]);
     v-bind="{
       ...(name ? { for: name } : {}),
     }"
-    class="border border-solid rounded-md relative bg-gray-100 cursor-text pt-3"
+    class="border border-solid rounded-md relative bg-gray-100 cursor-text"
     :class="[
+      label ? 'pt-3' : '',
       block ? 'block' : 'inline-block',
       error ? 'border-red-400' : 'border-gray-100',
       error && errorText ? 'mb-5' : '',
@@ -70,7 +87,9 @@ const emit = defineEmits(["update:modelValue"]);
         {{ label }}
       </div>
       <input
-        class="bg-gray-100 pt-2 pb-1 h-5 box-content outline-none block w-full"
+        class="bg-gray-100 box-content outline-none block w-full mt-0"
+        :class="[label ? 'pt-1 pb-1 h-6' : 'h-11']"
+        :placeholder="calcPlaceholder"
         :type="password ? 'password' : 'text'"
         :value="modelValue"
         @focus="isFocus = true"

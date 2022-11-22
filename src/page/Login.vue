@@ -88,12 +88,10 @@ const sendPassword = () => {};
   >
     <template v-slot:content>
       <div class="py-8 px-4">
-        <div>輸入您的帳號</div>
         <form-text-input
-          class="mt-1"
           block
           v-model="forgetPasswordModal.form.account"
-          label="帳號"
+          :placeholder="'輸入您的帳號'"
         />
       </div>
     </template>
