@@ -41,7 +41,7 @@ const emit = defineEmits(["update:modelValue"]);
     v-bind="{
       ...(name ? { for: name } : {}),
     }"
-    class="border border-solid rounded-md relative bg-gray-100 cursor-text pt-2"
+    class="border border-solid rounded-md relative bg-gray-100 cursor-text pt-3"
     :class="[
       block ? 'block' : 'inline-block',
       error ? 'border-red-400' : 'border-gray-100',
@@ -70,7 +70,7 @@ const emit = defineEmits(["update:modelValue"]);
         {{ label }}
       </div>
       <input
-        class="bg-gray-100 py-2 h-5 box-content outline-none block w-full"
+        class="bg-gray-100 pt-2 pb-1 h-5 box-content outline-none block w-full"
         :type="password ? 'password' : 'text'"
         :value="modelValue"
         @focus="isFocus = true"
