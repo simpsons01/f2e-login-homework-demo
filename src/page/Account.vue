@@ -2,6 +2,13 @@
 import { ref, reactive } from "vue";
 import FormTextInput from "../components/FormTextInput.vue";
 
+const nav = {
+  account: "account",
+  logout: "logout",
+};
+
+const activeNav = ref(nav.account);
+
 const isEditPassword = ref(false);
 
 const user = reactive({
@@ -12,6 +19,10 @@ const user = reactive({
 const form = reactive({
   password: "",
 });
+
+const onLogoutClick = () => {
+  activeNav.value = nav.logout;
+};
 </script>
 
 <template>
@@ -20,8 +31,20 @@ const form = reactive({
       <div class="basis-40 pr-4">
         <h3 class="text-gray-600 text-2xl">我的帳戶</h3>
         <ul class="mt-8">
-          <li class="text-md"><button>個人資料</button></li>
-          <li class="text-md text-gray-300 mt-3"><button>登出</button></li>
+          <li
+            :class="[
+              activeNav === nav.account ? 'text-black' : 'text-gray-300',
+            ]"
+            class="text-md"
+          >
+            <button @click="activeNav = nav.account">個人資料</button>
+          </li>
+          <li
+            :class="[activeNav === nav.logout ? 'text-black' : 'text-gray-300']"
+            class="text-md mt-3"
+          >
+            <button @click="onLogoutClick">登出</button>
+          </li>
         </ul>
       </div>
       <div class="flex-auto">
