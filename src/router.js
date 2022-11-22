@@ -2,11 +2,16 @@ import { createWebHashHistory, createRouter  } from "vue-router"
 import Account from "./page/Account.vue"
 import Login from "./page/Login.vue"
 import Register from "./page/Register.vue"
+import Home from "./page/Home.vue"
 
 const routes = [
   {
     path: "/",
-    alias: "/account",
+    name: "home",
+    component: Home
+  },
+  {
+    path: "/account",
     name: "account",
     component: Account
   },
