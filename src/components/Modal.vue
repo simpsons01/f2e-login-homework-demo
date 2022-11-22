@@ -28,7 +28,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <Transition name="temp">
+  <Transition name="modal">
     <div
       v-if="show"
       class="
@@ -39,7 +39,7 @@ const props = defineProps({
         h-full
         z-[1000]
         flex
-        items-start
+        items-center
         justify-center
         bg-black/60
         backdrop
@@ -47,10 +47,7 @@ const props = defineProps({
     >
       <div
         class="
-          absolute
-          left-1/2
-          top-1/2
-          -translate-y-2/4 -translate-x-2/4
+          relative
           bg-white
           p-4
           min-w-[500px] min-h-[200px]
@@ -61,7 +58,7 @@ const props = defineProps({
       >
         <div
           v-if="onCloseIconClick"
-          class="cancel absolute right-2 top-1 cursor-pointer w-8 h-8"
+          class="cancel absolute right-3 top-2 cursor-pointer w-8 h-8"
         >
           <x-mark-icon
             @click="onCloseIconClick"
@@ -112,35 +109,38 @@ const props = defineProps({
   </Transition>
 </template>
 
-<style>
-.temp-enter-active .backdrop,
-.temp-leave-active .backdrop {
-  transition: 0.3s opacity;
+<style scoped>
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s;
 }
-.temp-enter-active .backdrop .content,
-.temp-leave-active .backdrop .content {
-  transition: 0.3s opacity, 0.3s transform;
-  transition-delay: 0.1s;
-}
-
-.temp-enter-from .backdrop,
-.temp-leave-to .backdrop {
+.modal-enter-from,
+.modal-leave-to {
   opacity: 0;
 }
 
-.temp-enter-to .backdrop,
-.temp-leave-from .backdrop {
+.modal-enter-to,
+.modal-leave-from {
   opacity: 1;
 }
 
-.temp-enter-from .backdrop .content,
-.temp-leave-to .backdrop .content {
+.modal-enter-active .content,
+.modal-leave-active .content {
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.modal-enter-active .content {
+  transition-delay: 0.1s;
+}
+
+.modal-enter-from .content,
+.modal-leave-to .content {
   opacity: 0;
   transform: translateY(-2rem);
 }
 
-.temp-enter-to .backdrop .content,
-.temp-leave-from .backdrop .content {
+.modal-enter-to .content,
+.modal-leave-from .content {
   opacity: 1;
   transform: translateY(0);
 }
