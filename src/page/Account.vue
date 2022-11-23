@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive } from "vue";
 import FormTextInput from "../components/FormTextInput.vue";
+import { CheckIcon, XMarkIcon } from "@heroicons/vue/24/solid";
 
 const nav = {
   account: "account",
@@ -62,26 +63,43 @@ const onLogoutClick = () => {
             <li class="mt-3">
               <div class="flex items-center">
                 <div class="mr-4">密碼</div>
-                <div class="mr-2" v-if="!isEditPassword">
-                  {{ user.password }}
+                <div class="mr-2">
+                  <div v-if="!isEditPassword">
+                    {{ user.password }}
+                  </div>
+                  <div v-else>
+                    <form-text-input
+                      placeholder="請輸入新密碼"
+                      v-model="form.password"
+                    />
+                  </div>
                 </div>
-                <div v-else>
-                  <form-text-input
-                    class="mr-2"
-                    placeholder="請輸入新密碼"
-                    v-model="form.password"
-                  />
+                <div>
+                  <button
+                    @click="isEditPassword = true"
+                    v-if="!isEditPassword"
+                    class="btn bg-black px-4 py-1 text-white"
+                  >
+                    修改
+                  </button>
+                  <div v-else>
+                    <button @click="() => {}">
+                      <check-icon
+                        class="h-6 w-6"
+                        :class="[
+                          !form.password
+                            ? 'text-gray-300 cursor-not-allowed'
+                            : 'text-black',
+                        ]"
+                      />
+                    </button>
+                    <button
+                      @click="(isEditPassword = false) || (form.password = '')"
+                    >
+                      <x-mark-icon class="h-6 w-6" />
+                    </button>
+                  </div>
                 </div>
-                <button
-                  @click="isEditPassword = true"
-                  v-if="!isEditPassword"
-                  class="btn bg-black px-4 py-1 text-white"
-                >
-                  修改
-                </button>
-                <button v-else class="btn px-4 py-2 bg-black text-white">
-                  確認更改
-                </button>
               </div>
             </li>
           </ul>
