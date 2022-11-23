@@ -4,6 +4,8 @@ import Loading from "./components/Loading.vue";
 import Modal from "./components/Modal.vue";
 import { provide, reactive, ref } from "vue";
 
+const isLandingShow = ref(false);
+
 const isLoadingShow = ref(false);
 
 const alertModal = reactive({
@@ -85,6 +87,24 @@ provide("alert", {
   </div>
   <loading :show="isLoadingShow" />
   <modal v-bind="alertModal" />
+  <div
+    v-if="isLandingShow"
+    class="
+      fixed
+      left-0
+      top-0
+      w-full
+      h-full
+      z-[1000]
+      flex
+      items-center
+      justify-center
+      bg-white
+      landing
+    "
+  >
+    <Squares2X2Icon class="icon h-24 w-24" />
+  </div>
 </template>
 
 <style scoped>
@@ -95,5 +115,22 @@ provide("alert", {
 .f2e-login-homework main {
   min-height: calc(100vh - 7rem);
   overflow: auto;
+}
+
+.landing .icon {
+  animation-name: rotate-landing;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  transform-origin: 50% 50%;
+}
+
+@keyframes rotate-landing {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
