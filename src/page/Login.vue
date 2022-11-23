@@ -86,7 +86,7 @@ const onForgetPasswordModalConfirmClick = () => {
 </script>
 
 <template>
-  <div class="login min-h-[inherit] flex items-center">
+  <div class="login min-h-[inherit] relative">
     <div
       class="
         wrapper
@@ -95,8 +95,10 @@ const onForgetPasswordModalConfirmClick = () => {
         rounded-xl
         p-10
         mx-auto
-        -translate-y-[4rem]
-        md:-translate-y-[1rem]
+        absolute
+        top-[10%]
+        left-1/2
+        -translate-x-2/4
       "
     >
       <div class="flex">
