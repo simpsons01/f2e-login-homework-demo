@@ -2,6 +2,7 @@ export const messages = {
   required: "必填",
   email: "email格式不符合",
   confirmPassword: "密碼不一致",
+  verifyCode: "驗證碼錯誤",
   between: (min, max) => `至少${min}字元，至多${max}字元`,
 }
 
