@@ -3,12 +3,27 @@ import { reactive, ref } from "vue";
 import FormTextInput from "../components/FormTextInput.vue";
 import FormCheckbox from "../components/FormCheckbox.vue";
 import Modal from "../components/Modal.vue";
+import { useVuelidate } from "@vuelidate/core";
+import {
+  required,
+  email,
+  helpers,
+  minLength,
+  maxLength,
+} from "@vuelidate/validators";
+import {
+  messages as validateMessages,
+  getFirstVuelidateErrorMessage,
+} from "../common/validate";
+import { computed } from "@vue/reactivity";
+
+const isPasswordDisplay = ref(false);
 
 const form = reactive({
   account: "",
   password: "",
 });
-const isPasswordDisplay = ref(false);
+
 const forgetPasswordModal = reactive({
   show: false,
   form: {
@@ -16,7 +31,58 @@ const forgetPasswordModal = reactive({
   },
 });
 
-const sendPassword = () => {};
+const newPasswordModal = reactive({
+  show: false,
+  newPassword: "",
+});
+
+const formV$ = useVuelidate(
+  {
+    account: {
+      required: helpers.withMessage(validateMessages.required, required),
+      email: helpers.withMessage(validateMessages.email, email),
+    },
+    password: {
+      required: helpers.withMessage(validateMessages.required, required),
+      minMax: helpers.withMessage(validateMessages.between(8, 20), (value) => {
+        return (
+          minLength(8).$validator(value) && maxLength(20).$validator(value)
+        );
+      }),
+    },
+  },
+  form
+);
+
+const forgetPasswordModalFormV$ = useVuelidate(
+  {
+    account: {
+      required: helpers.withMessage(validateMessages.required, required),
+      email: helpers.withMessage(validateMessages.email, email),
+    },
+  },
+  forgetPasswordModal.form
+);
+
+const accountErrorMessage = computed(() =>
+  getFirstVuelidateErrorMessage(formV$.value.account)
+);
+
+const passwordErrorMessage = computed(() =>
+  getFirstVuelidateErrorMessage(formV$.value.password)
+);
+
+const forgetPasswordModalAccountErrorMessage = computed(() =>
+  getFirstVuelidateErrorMessage(forgetPasswordModalFormV$.value.account)
+);
+
+const submit = () => {
+  formV$.value.$touch();
+};
+
+const onForgetPasswordModalConfirmClick = () => {
+  forgetPasswordModalFormV$.value.$touch();
+};
 </script>
 
 <template>
@@ -37,12 +103,20 @@ const sendPassword = () => {};
         <div class="flex-auto p-16">
           <h3 class="m-0 text-2xl">登入</h3>
           <div class="mt-6">
-            <form-text-input block v-model="form.account" label="帳號" />
+            <form-text-input
+              :error="formV$.account.$error"
+              :errorText="accountErrorMessage"
+              block
+              v-model="form.account"
+              label="帳號"
+            />
           </div>
           <div class="mt-6">
             <form-text-input
               :type="isPasswordDisplay ? 'text' : 'password'"
               block
+              :error="formV$.password.$error"
+              :errorText="passwordErrorMessage"
               v-model="form.password"
               label="密碼"
             />
@@ -62,7 +136,9 @@ const sendPassword = () => {};
             </button>
           </div>
           <div class="mt-6">
-            <button class="btn w-full text-white bg-black">登入</button>
+            <button @click="submit" class="btn w-full text-white bg-black">
+              登入
+            </button>
           </div>
         </div>
         <div class="divider basis-[1px] bg-gray-300" />
@@ -80,11 +156,15 @@ const sendPassword = () => {};
     :on-close-icon-click="() => (forgetPasswordModal.show = false)"
     :cancel="{
       text: '取消',
-      handler: () => (forgetPasswordModal.show = false),
+      handler: () => {
+        forgetPasswordModal.form.account = '';
+        forgetPasswordModal.show = false;
+        forgetPasswordModalFormV$.$reset();
+      },
     }"
     :confirm="{
       text: '送出',
-      handler: sendPassword,
+      handler: onForgetPasswordModalConfirmClick,
     }"
   >
     <template v-slot:content>
@@ -92,8 +172,27 @@ const sendPassword = () => {};
         <form-text-input
           block
           v-model="forgetPasswordModal.form.account"
+          :error="forgetPasswordModalFormV$.account.$error"
+          :error-text="forgetPasswordModalAccountErrorMessage"
           :placeholder="'輸入您的帳號'"
         />
+      </div>
+    </template>
+  </modal>
+  <modal
+    title="新密碼"
+    :show="newPasswordModal.show"
+    :on-close-icon-click="() => (newPasswordModal.show = false)"
+    :confirm="{
+      text: '確認',
+      handler: () => {
+        newPasswordModal.show = false;
+      },
+    }"
+  >
+    <template v-slot:content>
+      <div class="my-8 mx-4 py-4 text-center text-2xl bg-black text-white">
+        {{ newPasswordModal.newPassword }}
       </div>
     </template>
   </modal>

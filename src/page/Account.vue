@@ -1,7 +1,13 @@
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import FormTextInput from "../components/FormTextInput.vue";
 import { CheckIcon, XMarkIcon } from "@heroicons/vue/24/solid";
+import { useVuelidate } from "@vuelidate/core";
+import { helpers, minLength, maxLength } from "@vuelidate/validators";
+import {
+  messages as validateMessages,
+  getFirstVuelidateErrorMessage,
+} from "../common/validate";
 
 const nav = {
   account: "account",
@@ -21,8 +27,25 @@ const form = reactive({
   password: "",
 });
 
-const onLogoutClick = () => {
-  activeNav.value = nav.logout;
+const v$ = useVuelidate(
+  {
+    password: {
+      minMax: helpers.withMessage(validateMessages.between(8, 20), (value) => {
+        return (
+          minLength(8).$validator(value) && maxLength(20).$validator(value)
+        );
+      }),
+    },
+  },
+  form
+);
+
+const passwordErrorMessage = computed(() =>
+  getFirstVuelidateErrorMessage(v$.value.password)
+);
+
+const changePassword = () => {
+  v$.value.$touch();
 };
 </script>
 
@@ -61,8 +84,10 @@ const onLogoutClick = () => {
               </div>
             </li>
             <li class="mt-3">
-              <div class="flex items-center">
-                <div class="mr-4">密碼</div>
+              <div class="flex" :class="[isEditPassword ? '' : 'items-center']">
+                <div class="mr-4" :class="[isEditPassword ? 'pt-4' : '']">
+                  密碼
+                </div>
                 <div class="mr-2">
                   <div v-if="!isEditPassword">
                     {{ user.password }}
@@ -71,10 +96,12 @@ const onLogoutClick = () => {
                     <form-text-input
                       placeholder="請輸入新密碼"
                       v-model="form.password"
+                      :error="v$.password.$error"
+                      :error-text="passwordErrorMessage"
                     />
                   </div>
                 </div>
-                <div>
+                <div :class="[isEditPassword ? 'pt-4' : '']">
                   <button
                     @click="isEditPassword = true"
                     v-if="!isEditPassword"
@@ -83,18 +110,17 @@ const onLogoutClick = () => {
                     修改
                   </button>
                   <div v-else>
-                    <button @click="() => {}">
-                      <check-icon
-                        class="h-6 w-6"
-                        :class="[
-                          !form.password
-                            ? 'text-gray-300 cursor-not-allowed'
-                            : 'text-black',
-                        ]"
-                      />
+                    <button @click="changePassword">
+                      <check-icon class="h-6 w-6 text-black" />
                     </button>
                     <button
-                      @click="(isEditPassword = false) || (form.password = '')"
+                      @click="
+                        () => {
+                          isEditPassword = false;
+                          form.password = '';
+                          v$.$reset();
+                        }
+                      "
                     >
                       <x-mark-icon class="h-6 w-6" />
                     </button>
