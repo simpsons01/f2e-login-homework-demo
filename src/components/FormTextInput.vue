@@ -61,7 +61,7 @@ const calcPlaceholder = computed(() => {
     :class="[
       label ? 'pt-3' : '',
       block ? 'block' : 'inline-block',
-      error ? 'border-red-400' : 'border-gray-100',
+      error ? 'border-red-600' : 'border-gray-100',
       error && errorText ? 'mb-5' : '',
       'relative',
     ]"
@@ -81,7 +81,7 @@ const calcPlaceholder = computed(() => {
           isFocus || !!modelValue
             ? '-translate-y-6 -translate-x-1/4'
             : '-translate-y-2/4',
-          error ? 'text-red-400' : 'text-black',
+          error ? 'text-red-600' : 'text-black',
         ]"
       >
         {{ label }}
@@ -103,7 +103,7 @@ const calcPlaceholder = computed(() => {
     </div>
     <div
       v-show="error && errorText"
-      class="absolute bottom-0 left-4 translate-y-full text-sm text-red-400"
+      class="absolute bottom-0 left-4 translate-y-full text-sm text-red-600"
     >
       {{ errorText }}
     </div>
