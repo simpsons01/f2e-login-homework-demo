@@ -17,21 +17,22 @@ import {
 } from "../common/validate";
 import { computed } from "@vue/reactivity";
 import { useRouter } from "vue-router";
-import http from "../common/http";
+import { useUserStore } from "../store/user";
+import { wait } from "../common/utils";
+
+const userStore = useUserStore();
 
 const alert = inject("alert");
 
 const loading = inject("loading");
-
-const user = inject("user");
 
 const router = useRouter();
 
 const isPasswordDisplay = ref(false);
 
 const form = reactive({
-  account: "ray.zhu@104.com.tw",
-  password: "12345678",
+  account: "",
+  password: "",
 });
 
 const forgetPasswordModal = reactive({
@@ -86,38 +87,40 @@ const forgetPasswordModalAccountErrorMessage = computed(() =>
   getFirstVuelidateErrorMessage(forgetPasswordModalFormV$.value.account)
 );
 
-const onForgetPasswordModalConfirmClick = () => {
+const onForgetPasswordModalConfirmClick = async () => {
   forgetPasswordModalFormV$.value.$touch();
+  if (!forgetPasswordModalFormV$.value.$invalid) {
+    try {
+      loading.show();
+      await wait(0.2);
+      const newPassword = await userStore.resetPassword(
+        forgetPasswordModal.form.account
+      );
+
+      forgetPasswordModal.show = false;
+      newPasswordModal.show = true;
+      newPasswordModal.newPassword = newPassword;
+      loading.hide();
+    } catch (error) {
+      loading.hide();
+      alert.open(error.data.message);
+    }
+  }
 };
 
-const submit = () => {
+const submit = async () => {
   formV$.value.$touch();
   if (!formV$.value.$invalid) {
-    loading.show();
-    setTimeout(() => {
-      http
-        .post("/user/login", {
-          email: form.account,
-          password: form.password,
-        })
-        .then((res) => {
-          loading.hide();
-          const {
-            data: {
-              data: { email: account },
-            },
-          } = res;
-          user.updateAccount(account);
-          router.push({ path: "/" });
-        })
-        .catch((error) => {
-          const {
-            data: { message },
-          } = createHttpErrorModel(error);
-          alert.open(message);
-          loading.hide();
-        });
-    }, 1500);
+    try {
+      loading.show();
+      await wait(0.2);
+      await userStore.login(form.account, form.password);
+      loading.hide();
+      router.push({ path: "/" });
+    } catch (error) {
+      loading.hide();
+      alert.open(error.data.message);
+    }
   }
 };
 </script>

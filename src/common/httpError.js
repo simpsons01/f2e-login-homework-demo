@@ -12,24 +12,23 @@ const handleUnauthorizedError = (error) => "尚未登入"
 
 const handleValidationError = (error) => {
   let message = ''
-  if(error.data && error.data.data) {
-    const keys = Object.keys(error.data.data)
-    keys.forEach((key, index) => {
-      if(index === errorKeys.length - 1) {
-        message = error.data.data[key]
-      }else {
-        message = `${error.data.data[key]} \n`
-      }
-    })
-  }
+  const keys = Object.keys(error.response.data.data)
+  keys.forEach((key, index) => {
+    if(index === errorKeys.length - 1) {
+      message = error.response.data.data[key]
+    }else {
+      message = `${error.response.data.data[key]} \n`
+    }
+  })
   if(!message) message = fallBackHttpErrorMessage
   return message
 }
 
 export const createHttpErrorModel = error => {
-  let message = ''
-  if(error && error.data && error.data.statusCode) {
-    const { data: { statusCode } } = error
+  let message = fallBackHttpErrorMessage, statusCode = errorCode.internalServerError
+  if(error.response && error.response.data && error.response.data.statusCode) {
+    const { response: { data: { statusCode: _statusCode } } } = error
+    statusCode = _statusCode
     if(statusCode === errorCode.internalServerError) {
       message = handleInternalServerError(error)
     }else if(statusCode === errorCode.unauthorized) {
@@ -39,9 +38,10 @@ export const createHttpErrorModel = error => {
     }
   }
   return {
-    ...(error || {}),
+    ...error,
     data: {
-      message: message ? message : fallBackHttpErrorMessage
+      statusCode,
+      message
     }
   }
 }

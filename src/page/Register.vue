@@ -13,9 +13,11 @@ import {
   messages as validateMessages,
   getFirstVuelidateErrorMessage,
 } from "../common/validate";
-import http from "../common/http";
-import { createHttpErrorModel } from "../common/httpError";
 import { ArrowLeftIcon } from "@heroicons/vue/24/solid";
+import { useUserStore } from "../store/user";
+import { wait } from "../common/utils";
+
+const userStore = useUserStore();
 
 const alert = inject("alert");
 
@@ -97,68 +99,50 @@ const verifyCodeErrorMessage = computed(() =>
   getFirstVuelidateErrorMessage(verifyFormV$.value.code)
 );
 
-const registerFormSubmit = () => {
+const registerFormSubmit = async () => {
   registerFormV$.value.$touch();
   if (!registerFormV$.value.$invalid) {
-    loading.show();
-    setTimeout(() => {
-      http
-        .post("/user/signup", {
-          email: registerForm.account,
-          password: registerForm.password,
-        })
-        .then((res) => {
-          const {
-            data: {
-              data: { verifyKey, verifyCode },
-            },
-          } = res;
-          verify.code = verifyCode;
-          verify.key = verifyKey;
-          currentStep.value = step.verify;
-          loading.hide();
-        })
-        .catch((error) => {
-          const {
-            data: { message },
-          } = createHttpErrorModel(error);
-          alert.open(message);
-          loading.hide();
-        });
-    }, 1500);
+    try {
+      loading.show();
+      await wait(0.2);
+      const res = await userStore.register(
+        registerForm.account,
+        registerForm.password
+      );
+      verify.code = res.verifyCode;
+      verify.key = res.verifyKey;
+      currentStep.value = step.verify;
+      loading.hide();
+    } catch (error) {
+      loading.hide();
+      alert.open(error.data.message);
+    }
   }
 };
 
-const verifyFormSubmit = () => {
+const verifyFormSubmit = async () => {
   verifyFormV$.value.$touch();
   if (!verifyFormV$.value.$invalid) {
-    loading.show();
-    setTimeout(() => {
-      http
-        .patch("/user/verify", {
-          verifyCode: verifyForm.code,
-          verifyKey: verify.key,
-        })
-        .then(() => {
-          currentStep.value = step.success;
-          loading.hide();
-        })
-        .catch((error) => {
-          const {
-            data: { message },
-          } = createHttpErrorModel(error);
-          alert.open(message);
-          loading.hide();
-        });
-    }, 1500);
+    try {
+      loading.show();
+      await wait(0.2);
+      await userStore.verify(verifyForm.code, verify.key);
+      currentStep.value = step.success;
+      loading.hide();
+    } catch (error) {
+      alert.open(error.data.message);
+      loading.hide();
+    }
   }
 };
 
-const backToRegister = () => {
+const verifyStepBackToRegister = () => {
   currentStep.value = step.register;
   registerForm.account = "";
   registerForm.password = "";
   registerForm.confirmPassword = "";
+  verify.code = "";
+  verify.key = "";
   registerFormV$.value.$reset();
 };
 </script>
@@ -235,7 +219,10 @@ const backToRegister = () => {
             v-if="currentStep === step.verify"
             class="p-16 bg-white absolute left-0 top-0 w-full h-full"
           >
-            <button @click="backToRegister" class="absolute top-0 left-0">
+            <button
+              @click="verifyStepBackToRegister"
+              class="absolute top-0 left-0"
+            >
               <arrow-left-icon class="w-8 h-8 text-black" />
             </button>
             <h3 class="m-0 text-2xl">驗證碼</h3>

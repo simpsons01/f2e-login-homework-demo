@@ -1,0 +1,1 @@
+export const wait = (sec) => new Promise((resolve) => setTimeout(() => resolve(), Math.floor(sec * 1000)))

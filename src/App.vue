@@ -2,18 +2,14 @@
 import { UserCircleIcon, Squares2X2Icon } from "@heroicons/vue/24/solid";
 import Loading from "./components/Loading.vue";
 import Modal from "./components/Modal.vue";
-import { onMounted, provide, reactive, ref, readonly } from "vue";
-import http from "./common/http";
-import { useRouter } from "vue-router";
-import { computed } from "@vue/reactivity";
+import { provide, reactive, ref, onBeforeMount } from "vue";
+import * as EventBus from "./common/eventbus";
 
-const router = useRouter();
+import { useUserStore } from "./store/user";
 
-const user = reactive({
-  account: "",
-});
+const userStore = useUserStore();
 
-const isLandingShow = ref(false);
+const isLandingShow = ref(true);
 
 const isLoadingShow = ref(false);
 
@@ -28,8 +24,6 @@ const alertModal = reactive({
   },
 });
 
-const isLogin = computed(() => !!user.account);
-
 const loadingUtil = {
   show: () => {
     isLoadingShow.value = true;
@@ -42,24 +36,32 @@ const loadingUtil = {
 provide("loading", loadingUtil);
 
 const alertUtil = {
-  open: (content) => {
-    alertModal.content = content;
+  open: (payload) => {
     alertModal.show = true;
+    if (typeof payload === "string") {
+      alertModal.content = payload;
+    } else {
+      const keys = Object.keys(payload);
+      keys.forEach((key) => {
+        alertModal[key] = payload[key];
+      });
+    }
   },
   close: () => (alertModal.show = false),
 };
 
 provide("alert", alertUtil);
 
-const userUtil = {
-  getIsLogin: () => computed(() => !!user.account),
-  getUser: () => readonly(user),
-  updateAccount: (account) => {
-    user.account = account;
-  },
-};
+const landingEventUnRegister = EventBus.register(
+  "controlLandingShow",
+  (val) => {
+    isLandingShow.value = val;
+  }
+);
 
-provide("user", userUtil);
+onBeforeMount(() => {
+  landingEventUnRegister();
+});
 </script>
 
 <template>
@@ -78,12 +80,15 @@ provide("user", userUtil);
     >
       <div class="xl:container px-4 mx-auto flex h-full">
         <div class="flex-initial flex items-center">
-          <router-link class="flex items-center" :to="isLogin ? '/' : '/login'">
+          <router-link
+            class="flex items-center"
+            :to="userStore.isLogin ? '/' : '/login'"
+          >
             <Squares2X2Icon class="h-12 w-12" />
           </router-link>
         </div>
         <div class="flex-auto flex flex-row-reverse">
-          <div v-if="isLogin" class="flex-initial flex items-center">
+          <div v-if="userStore.isLogin" class="flex-initial flex items-center">
             <router-link class="block" to="/account">
               <user-circle-icon class="h-12 w-12" />
             </router-link>
@@ -140,22 +145,5 @@ provide("user", userUtil);
 .f2e-login-homework main {
   min-height: calc(100vh - 7rem);
   overflow: auto;
-}
-
-.landing .icon {
-  animation-name: rotate-landing;
-  animation-duration: 2s;
-  animation-iteration-count: infinite;
-  transform-origin: 50% 50%;
-}
-
-@keyframes rotate-landing {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>
