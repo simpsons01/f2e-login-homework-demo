@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed, inject } from "vue";
+import { ref, reactive, computed, inject, onMounted } from "vue";
 import FormTextInput from "../components/FormTextInput.vue";
 
 import { useVuelidate } from "@vuelidate/core";
@@ -159,6 +159,7 @@ const onLogoutClick = async () => {
                 v-model="form.password"
                 :error="v$.password.$error"
                 :error-text="passwordErrorMessage"
+                @keydown.enter.stop="changePassword"
               />
               <div class="pt-2">
                 <button

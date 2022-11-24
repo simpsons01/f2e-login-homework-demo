@@ -74,6 +74,13 @@ export const useUserStore = defineStore('user', {
       return withHandleError(http.delete("/user/logout")).then(() => {
         this.updateIsLogin(false)
         this.updateUser({ account: "", id: "" })
+      }).catch(error => {
+        if(error.data.statusCode === errorCode.unauthorized) {
+          this.updateIsLogin(false)
+          this.updateUser({ account: "", id: "" })
+          return
+        }
+        return Promise.reject(error)
       })
     },
     resetPassword(email) {

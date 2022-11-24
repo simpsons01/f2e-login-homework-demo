@@ -1,5 +1,12 @@
 <script setup>
-import { reactive, ref, computed, inject } from "vue";
+import {
+  reactive,
+  ref,
+  computed,
+  inject,
+  onMounted,
+  onBeforeUnmount,
+} from "vue";
 import FormTextInput from "../components/FormTextInput.vue";
 import { useVuelidate } from "@vuelidate/core";
 import {
@@ -145,6 +152,24 @@ const verifyStepBackToRegister = () => {
   verify.key = "";
   registerFormV$.value.$reset();
 };
+
+const onKeydown = (e) => {
+  if (e.key === "Enter") {
+    if (currentStep.value === step.register) {
+      registerFormSubmit();
+    } else if (currentStep.value === step.verify) {
+      verifyFormSubmit();
+    }
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("keydown", onKeydown);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", onKeydown);
+});
 </script>
 
 <template>

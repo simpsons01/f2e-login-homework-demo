@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, inject } from "vue";
+import { reactive, ref, inject, onBeforeUnmount, onMounted } from "vue";
 import FormTextInput from "../components/FormTextInput.vue";
 import FormCheckbox from "../components/FormCheckbox.vue";
 import Modal from "../components/Modal.vue";
@@ -87,7 +87,7 @@ const forgetPasswordModalAccountErrorMessage = computed(() =>
   getFirstVuelidateErrorMessage(forgetPasswordModalFormV$.value.account)
 );
 
-const onForgetPasswordModalConfirmClick = async () => {
+const submitForgetPassword = async () => {
   forgetPasswordModalFormV$.value.$touch();
   if (!forgetPasswordModalFormV$.value.$invalid) {
     try {
@@ -123,6 +123,26 @@ const submit = async () => {
     }
   }
 };
+
+const onForgetModalClose = () => {
+  forgetPasswordModal.form.account = "";
+  forgetPasswordModal.show = false;
+  forgetPasswordModalFormV$.value.$reset();
+};
+
+const onKeydown = (e) => {
+  if (e.key === "Enter") {
+    submit();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("keydown", onKeydown);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", onKeydown);
+});
 </script>
 
 <template>
@@ -195,18 +215,14 @@ const submit = async () => {
   <modal
     title="忘記密碼"
     :show="forgetPasswordModal.show"
-    :on-close-icon-click="() => (forgetPasswordModal.show = false)"
+    :on-close-icon-click="onForgetModalClose"
     :cancel="{
       text: '取消',
-      handler: () => {
-        forgetPasswordModal.form.account = '';
-        forgetPasswordModal.show = false;
-        forgetPasswordModalFormV$.$reset();
-      },
+      handler: onForgetModalClose,
     }"
     :confirm="{
       text: '送出',
-      handler: onForgetPasswordModalConfirmClick,
+      handler: submitForgetPassword,
     }"
   >
     <template v-slot:content>
@@ -216,6 +232,7 @@ const submit = async () => {
           v-model="forgetPasswordModal.form.account"
           :error="forgetPasswordModalFormV$.account.$error"
           :error-text="forgetPasswordModalAccountErrorMessage"
+          @keydown.enter.stop="submitForgetPassword"
           :placeholder="'輸入您的帳號'"
         />
       </div>
@@ -227,9 +244,7 @@ const submit = async () => {
     :on-close-icon-click="() => (newPasswordModal.show = false)"
     :confirm="{
       text: '確認',
-      handler: () => {
-        newPasswordModal.show = false;
-      },
+      handler: () => (newPasswordModal.show = false),
     }"
   >
     <template v-slot:content>
