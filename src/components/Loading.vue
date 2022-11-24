@@ -20,8 +20,7 @@ const props = defineProps({
       flex
       items-start
       justify-center
-      bg-black
-      opacity-50
+      bg-black/60
     "
   >
     <div
