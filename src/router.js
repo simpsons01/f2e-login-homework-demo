@@ -59,12 +59,14 @@ const router = createRouter({
   routes, 
 })
 
+let isInitial = false
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
   try {
-    if(!from.name) {
+    if(!isInitial) {
       await wait(0.3)
       await userStore.getUser()
+      isInitial = true
     }
     if(to.meta.authRequired == null) {
       next()
