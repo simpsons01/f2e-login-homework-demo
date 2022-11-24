@@ -87,6 +87,7 @@ router.beforeEach(async (to, from, next) => {
     }
     EventBus.notify("controlLandingShow", false)
   }catch(error) {
+    isInitial = true
     EventBus.notify("controlLandingShow", false)
     next("error500")
   }
