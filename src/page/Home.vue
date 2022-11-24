@@ -1,16 +1,14 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import FormTextInput from "../components/FormTextInput.vue";
+import { ref, onMounted, inject } from "vue";
+
+const user = inject("user");
 
 const welcomeText = ref("");
 
-const user = reactive({
-  account: "ray.zhu@104.com.tw",
-});
-
 onMounted(() => {
   setTimeout(() => {
-    const username = user.account.split("@")[0];
+    const _user = user.getUser();
+    const username = _user.account.split("@")[0];
     const text = `歡迎，${username}`;
     let count = 0;
     let timer = setInterval(() => {

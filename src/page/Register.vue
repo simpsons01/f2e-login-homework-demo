@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, computed } from "vue";
+import { reactive, ref, computed, inject } from "vue";
 import FormTextInput from "../components/FormTextInput.vue";
 import { useVuelidate } from "@vuelidate/core";
 import {
@@ -13,6 +13,13 @@ import {
   messages as validateMessages,
   getFirstVuelidateErrorMessage,
 } from "../common/validate";
+import http from "../common/http";
+import { createHttpErrorModel } from "../common/httpError";
+import { ArrowLeftIcon } from "@heroicons/vue/24/solid";
+
+const alert = inject("alert");
+
+const loading = inject("loading");
 
 const step = {
   register: "register",
@@ -27,13 +34,16 @@ const registerForm = reactive({
 });
 const isPasswordDisplay = ref(false);
 
-const verifyCode = ref("1234");
+const verify = reactive({
+  key: "",
+  code: "",
+});
 
 const verifyForm = reactive({
   code: "",
 });
 
-const currentStep = ref(step.verify);
+const currentStep = ref(step.register);
 
 const registerFormV$ = useVuelidate(
   {
@@ -64,7 +74,7 @@ const verifyFormV$ = useVuelidate(
     code: {
       required: helpers.withMessage(validateMessages.required, required),
       match: helpers.withMessage(validateMessages.verifyCode, (value) => {
-        return value === verifyCode.value;
+        return value === verify.code;
       }),
     },
   },
@@ -89,10 +99,67 @@ const verifyCodeErrorMessage = computed(() =>
 
 const registerFormSubmit = () => {
   registerFormV$.value.$touch();
+  if (!registerFormV$.value.$invalid) {
+    loading.show();
+    setTimeout(() => {
+      http
+        .post("/user/signup", {
+          email: registerForm.account,
+          password: registerForm.password,
+        })
+        .then((res) => {
+          const {
+            data: {
+              data: { verifyKey, verifyCode },
+            },
+          } = res;
+          verify.code = verifyCode;
+          verify.key = verifyKey;
+          currentStep.value = step.verify;
+          loading.hide();
+        })
+        .catch((error) => {
+          const {
+            data: { message },
+          } = createHttpErrorModel(error);
+          alert.open(message);
+          loading.hide();
+        });
+    }, 1500);
+  }
 };
 
 const verifyFormSubmit = () => {
   verifyFormV$.value.$touch();
+  if (!verifyFormV$.value.$invalid) {
+    loading.show();
+    setTimeout(() => {
+      http
+        .patch("/user/verify", {
+          verifyCode: verifyForm.code,
+          verifyKey: verify.key,
+        })
+        .then(() => {
+          currentStep.value = step.success;
+          loading.hide();
+        })
+        .catch((error) => {
+          const {
+            data: { message },
+          } = createHttpErrorModel(error);
+          alert.open(message);
+          loading.hide();
+        });
+    }, 1500);
+  }
+};
+
+const backToRegister = () => {
+  currentStep.value = step.register;
+  registerForm.account = "";
+  registerForm.password = "";
+  registerForm.confirmPassword = "";
+  registerFormV$.value.$reset();
 };
 </script>
 
@@ -168,6 +235,9 @@ const verifyFormSubmit = () => {
             v-if="currentStep === step.verify"
             class="p-16 bg-white absolute left-0 top-0 w-full h-full"
           >
+            <button @click="backToRegister" class="absolute top-0 left-0">
+              <arrow-left-icon class="w-8 h-8 text-black" />
+            </button>
             <h3 class="m-0 text-2xl">驗證碼</h3>
             <div class="mt-6">
               <form-text-input
@@ -180,7 +250,7 @@ const verifyFormSubmit = () => {
             </div>
             <div class="mt-6">
               <div class="bg-gray-300 text-black rounded-sm p-2 text-center">
-                驗證碼: {{ verifyCode }}
+                驗證碼: {{ verify.code }}
               </div>
             </div>
             <div class="mt-6">
