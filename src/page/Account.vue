@@ -17,6 +17,8 @@ const router = useRouter();
 
 const userStore = useUserStore();
 
+console.log(userStore);
+
 const loading = inject("loading");
 
 const alert = inject("alert");
@@ -28,11 +30,6 @@ const nav = {
 };
 
 const activeNav = ref(nav.account);
-
-const user = reactive({
-  account: "ray.zhu@104.com.tw",
-  password: "123qwe",
-});
 
 const form = reactive({
   password: "",
@@ -140,7 +137,7 @@ const onLogoutClick = async () => {
               <li>
                 <div class="flex items-center">
                   <div class="mr-4">帳號</div>
-                  <div>{{ user.account }}</div>
+                  <div>{{ userStore.account }}</div>
                 </div>
               </li>
             </ul>

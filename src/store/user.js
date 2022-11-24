@@ -20,10 +20,16 @@ export const useUserStore = defineStore('user', {
       this.account = user.account
       this.id = user.id
     },
-    authValid() {
-      return withHandleError(http.put("/user/auth-valid").then(() => {
-         this.updateIsLogin(true)
-       })).catch(error => {
+    getUser() {
+      return withHandleError(http.get("/user").then((res) => {
+        const {
+          data: {
+            data: { email: account, id },
+          },
+        } = res;
+        this.updateIsLogin(true)
+        this.updateUser({ account, id })
+      })).catch(error => {
         if(error.data.statusCode === errorCode.unauthorized) {
           return
         }

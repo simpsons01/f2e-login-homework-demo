@@ -1,14 +1,14 @@
 <script setup>
 import { ref, onMounted, inject } from "vue";
+import { useUserStore } from "../store/user";
 
-const user = inject("user");
+const userStore = useUserStore();
 
 const welcomeText = ref("");
 
 onMounted(() => {
   setTimeout(() => {
-    const _user = user.getUser();
-    const username = _user.account.split("@")[0];
+    const username = userStore.account.split("@")[0];
     const text = `歡迎，${username}`;
     let count = 0;
     let timer = setInterval(() => {
