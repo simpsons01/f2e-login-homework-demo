@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, inject } from "vue";
 import FormTextInput from "../components/FormTextInput.vue";
 import FormCheckbox from "../components/FormCheckbox.vue";
 import Modal from "../components/Modal.vue";
@@ -16,12 +16,22 @@ import {
   getFirstVuelidateErrorMessage,
 } from "../common/validate";
 import { computed } from "@vue/reactivity";
+import { useRouter } from "vue-router";
+import http from "../common/http";
+
+const alert = inject("alert");
+
+const loading = inject("loading");
+
+const user = inject("user");
+
+const router = useRouter();
 
 const isPasswordDisplay = ref(false);
 
 const form = reactive({
-  account: "",
-  password: "",
+  account: "ray.zhu@104.com.tw",
+  password: "12345678",
 });
 
 const forgetPasswordModal = reactive({
@@ -76,12 +86,39 @@ const forgetPasswordModalAccountErrorMessage = computed(() =>
   getFirstVuelidateErrorMessage(forgetPasswordModalFormV$.value.account)
 );
 
-const submit = () => {
-  formV$.value.$touch();
-};
-
 const onForgetPasswordModalConfirmClick = () => {
   forgetPasswordModalFormV$.value.$touch();
+};
+
+const submit = () => {
+  formV$.value.$touch();
+  if (!formV$.value.$invalid) {
+    loading.show();
+    setTimeout(() => {
+      http
+        .post("/user/login", {
+          email: form.account,
+          password: form.password,
+        })
+        .then((res) => {
+          loading.hide();
+          const {
+            data: {
+              data: { email: account },
+            },
+          } = res;
+          user.updateAccount(account);
+          router.push({ path: "/" });
+        })
+        .catch((error) => {
+          const {
+            data: { message },
+          } = createHttpErrorModel(error);
+          alert.open(message);
+          loading.hide();
+        });
+    }, 1500);
+  }
 };
 </script>
 

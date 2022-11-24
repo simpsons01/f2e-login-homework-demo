@@ -2,7 +2,16 @@
 import { UserCircleIcon, Squares2X2Icon } from "@heroicons/vue/24/solid";
 import Loading from "./components/Loading.vue";
 import Modal from "./components/Modal.vue";
-import { provide, reactive, ref } from "vue";
+import { onMounted, provide, reactive, ref, readonly } from "vue";
+import http from "./common/http";
+import { useRouter } from "vue-router";
+import { computed } from "@vue/reactivity";
+
+const router = useRouter();
+
+const user = reactive({
+  account: "",
+});
 
 const isLandingShow = ref(false);
 
@@ -19,22 +28,38 @@ const alertModal = reactive({
   },
 });
 
-provide("loading", {
+const isLogin = computed(() => !!user.account);
+
+const loadingUtil = {
   show: () => {
     isLoadingShow.value = true;
   },
   hide: () => {
     isLoadingShow.value = false;
   },
-});
+};
 
-provide("alert", {
+provide("loading", loadingUtil);
+
+const alertUtil = {
   open: (content) => {
     alertModal.content = content;
     alertModal.show = true;
   },
   close: () => (alertModal.show = false),
-});
+};
+
+provide("alert", alertUtil);
+
+const userUtil = {
+  getIsLogin: () => computed(() => !!user.account),
+  getUser: () => readonly(user),
+  updateAccount: (account) => {
+    user.account = account;
+  },
+};
+
+provide("user", userUtil);
 </script>
 
 <template>
@@ -53,12 +78,12 @@ provide("alert", {
     >
       <div class="xl:container px-4 mx-auto flex h-full">
         <div class="flex-initial flex items-center">
-          <router-link class="flex items-center" to="/">
+          <router-link class="flex items-center" :to="isLogin ? '/' : '/login'">
             <Squares2X2Icon class="h-12 w-12" />
           </router-link>
         </div>
         <div class="flex-auto flex flex-row-reverse">
-          <div class="flex-initial flex items-center">
+          <div v-if="isLogin" class="flex-initial flex items-center">
             <router-link class="block" to="/account">
               <user-circle-icon class="h-12 w-12" />
             </router-link>
