@@ -35,8 +35,10 @@ const props = defineProps({
     <div
       class="border border-solid h-4 w-4 p-[2px] mr-1 relative"
       :class="[
-        checked ? 'bg-black' : '',
-        checked ? 'border-black' : 'border-gray-400',
+        checked ? 'bg-black dark:bg-zinc-300' : 'dark:bg-zinc-300',
+        checked
+          ? 'border-black dark:bg-zinc-300 '
+          : 'border-gray-400 dark:border-zinc-300',
       ]"
     >
       <check-icon
@@ -48,11 +50,12 @@ const props = defineProps({
           top-1/2
           -translate-y-2/4 -translate-x-2/4
           text-white
+          dark:text-zinc-900
         "
         :class="[checked ? '' : 'hidden']"
       />
     </div>
-    <span>
+    <span class="dark:text-zinc-300">
       {{ label }}
     </span>
   </label>

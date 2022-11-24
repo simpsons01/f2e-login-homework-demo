@@ -100,14 +100,16 @@ const onLogoutClick = async () => {
 </script>
 
 <template>
-  <div class="account xl:container mx-auto">
+  <div class="account xl:container mx-auto dark:bg-zinc-900">
     <div class="px-12 py-8 flex">
       <div class="basis-40 pr-4">
-        <h3 class="text-gray-600 text-2xl">我的帳戶</h3>
+        <h3 class="text-gray-600 text-2xl dark:text-zinc-200">我的帳戶</h3>
         <ul class="mt-8">
           <li
             :class="[
-              activeNav === nav.account ? 'text-black' : 'text-gray-300',
+              activeNav === nav.account
+                ? 'text-black dark:text-zinc-200'
+                : 'text-gray-300 dark:text-zinc-700',
             ]"
             class="text-md"
           >
@@ -115,14 +117,20 @@ const onLogoutClick = async () => {
           </li>
           <li
             :class="[
-              activeNav === nav.changePassword ? 'text-black' : 'text-gray-300',
+              activeNav === nav.changePassword
+                ? 'text-black dark:text-zinc-200'
+                : 'text-gray-300 dark:text-zinc-700',
             ]"
             class="text-md mt-3"
           >
             <button @click="activeNav = nav.changePassword">更改密碼</button>
           </li>
           <li
-            :class="[activeNav === nav.logout ? 'text-black' : 'text-gray-300']"
+            :class="[
+              activeNav === nav.logout
+                ? 'text-black dark:text-zinc-200'
+                : 'text-gray-300 dark:text-zinc-700',
+            ]"
             class="text-md mt-3"
           >
             <button @click="onLogoutClick">登出</button>
@@ -131,15 +139,22 @@ const onLogoutClick = async () => {
       </div>
       <div class="flex-auto">
         <div v-if="activeNav === nav.account">
-          <div class="p-8 border-solid border-gray-200 border-b">
-            <p class="text-xl">個人資料</p>
+          <div
+            class="
+              p-8
+              border-solid border-gray-200
+              dark:border-zinc-300
+              border-b
+            "
+          >
+            <p class="text-xl dark:text-zinc-300">個人資料</p>
           </div>
           <div class="p-8">
             <ul>
               <li>
                 <div class="flex items-center">
-                  <div class="mr-4">帳號</div>
-                  <div>{{ userStore.account }}</div>
+                  <div class="mr-4 dark:text-zinc-300">帳號</div>
+                  <div class="dark:text-zinc-300">{{ userStore.account }}</div>
                 </div>
               </li>
             </ul>
@@ -147,7 +162,7 @@ const onLogoutClick = async () => {
         </div>
         <div v-if="activeNav === nav.changePassword">
           <div class="p-8 border-solid border-gray-200 border-b">
-            <p class="text-xl">更改密碼</p>
+            <p class="text-xl dark:text-zinc-300">更改密碼</p>
           </div>
           <div class="p-8">
             <div class="flex">
@@ -161,7 +176,7 @@ const onLogoutClick = async () => {
               />
               <div class="pt-2">
                 <button
-                  class="btn bg-black text-white ml-2 p-2"
+                  class="btn bg-black text-white dark:text-zinc-300 ml-2 p-2"
                   @click="changePassword"
                 >
                   確認修改

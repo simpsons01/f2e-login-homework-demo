@@ -173,7 +173,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="register min-h-[inherit] relative">
+  <div class="register dark:bg-stone-900 min-h-[inherit] relative">
     <div
       class="
         wrapper
@@ -186,6 +186,7 @@ onBeforeUnmount(() => {
         top-[10%]
         left-1/2
         -translate-x-2/4
+        dark:shadow-zinc-700
       "
     >
       <div class="flex overflow-hidden relative min-h-[400px]">
@@ -194,7 +195,7 @@ onBeforeUnmount(() => {
             v-if="currentStep === step.register"
             class="absolute left-0 top-0 w-full h-full box-content"
           >
-            <h3 class="m-0 text-2xl">註冊</h3>
+            <h3 class="m-0 text-2xl dark:text-zinc-300">註冊</h3>
             <div class="mt-6">
               <form-text-input
                 :error="registerFormV$.account.$error"
@@ -226,7 +227,11 @@ onBeforeUnmount(() => {
             </div>
             <div class="mt-6 text-right">
               <router-link
-                class="underline underline-offset-1 cursor-pointer"
+                class="
+                  underline underline-offset-1
+                  cursor-pointer
+                  dark:text-zinc-300
+                "
                 to="login"
                 >已是會員?</router-link
               >
@@ -234,7 +239,7 @@ onBeforeUnmount(() => {
             <div class="mt-6">
               <button
                 @click="registerFormSubmit"
-                class="btn w-full text-white bg-black"
+                class="btn w-full text-white dark:text-zinc-300 bg-black"
               >
                 送出
               </button>
@@ -242,15 +247,15 @@ onBeforeUnmount(() => {
           </div>
           <div
             v-if="currentStep === step.verify"
-            class="p-16 bg-white absolute left-0 top-0 w-full h-full"
+            class="p-16 absolute left-0 top-0 w-full h-full"
           >
             <button
               @click="verifyStepBackToRegister"
               class="absolute top-0 left-0"
             >
-              <arrow-left-icon class="w-8 h-8 text-black" />
+              <arrow-left-icon class="w-8 h-8 text-black dark:text-zinc-300" />
             </button>
-            <h3 class="m-0 text-2xl">驗證碼</h3>
+            <h3 class="m-0 text-2xl dark:text-zinc-300">驗證碼</h3>
             <div class="mt-6">
               <form-text-input
                 block
@@ -261,14 +266,23 @@ onBeforeUnmount(() => {
               />
             </div>
             <div class="mt-6">
-              <div class="bg-gray-300 text-black rounded-sm p-2 text-center">
+              <div
+                class="
+                  bg-gray-300
+                  text-black
+                  dark:bg-stone-800 dark:text-zinc-300
+                  rounded-sm
+                  p-2
+                  text-center
+                "
+              >
                 驗證碼: {{ verify.code }}
               </div>
             </div>
             <div class="mt-6">
               <button
                 @click="verifyFormSubmit"
-                class="btn w-full text-white bg-black"
+                class="btn w-full text-white dark:text-zinc-300 bg-black"
               >
                 送出
               </button>
@@ -280,7 +294,6 @@ onBeforeUnmount(() => {
               flex flex-col
               items-center
               justify-center
-              bg-white
               absolute
               left-0
               top-0
@@ -288,9 +301,15 @@ onBeforeUnmount(() => {
               h-full
             "
           >
-            <h3 class="m-0 text-5xl">註冊成功!</h3>
+            <h3 class="m-0 text-5xl dark:text-zinc-300">註冊成功!</h3>
             <router-link
-              class="underline underline-offset-1 cursor-pointer text-2xl mt-4"
+              class="
+                underline underline-offset-1
+                cursor-pointer
+                text-2xl
+                mt-4
+                dark:text-zinc-300
+              "
               to="/login"
             >
               登入

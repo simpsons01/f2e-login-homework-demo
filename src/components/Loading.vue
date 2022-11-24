@@ -21,6 +21,7 @@ const props = defineProps({
       items-start
       justify-center
       bg-black/60
+      dark:bg-zinc-400/60
     "
   >
     <div
@@ -33,6 +34,7 @@ const props = defineProps({
         top-1/2
         -translate-y-2/4 -translate-x-2/4
         text-white
+        dark:text-zinc-200
       "
     ></div>
   </div>

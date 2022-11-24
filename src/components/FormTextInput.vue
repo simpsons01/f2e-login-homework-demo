@@ -57,11 +57,18 @@ const calcPlaceholder = computed(() => {
     v-bind="{
       ...(name ? { for: name } : {}),
     }"
-    class="border border-solid rounded-md relative bg-gray-100 cursor-text"
+    class="
+      border border-solid
+      rounded-md
+      relative
+      bg-gray-100
+      dark:bg-zinc-800
+      cursor-text
+    "
     :class="[
       label ? 'pt-3' : '',
       block ? 'block' : 'inline-block',
-      error ? 'border-red-600' : 'border-gray-100',
+      error ? 'border-red-600' : 'border-gray-100 dark:border-zinc-800',
       error && errorText ? 'mb-5' : '',
       'relative',
     ]"
@@ -81,13 +88,22 @@ const calcPlaceholder = computed(() => {
           isFocus || !!modelValue
             ? '-translate-y-6 -translate-x-1/4'
             : '-translate-y-2/4',
-          error ? 'text-red-600' : 'text-black',
+          error ? 'text-red-600' : 'text-black dark:text-zinc-300',
         ]"
       >
         {{ label }}
       </div>
       <input
-        class="bg-gray-100 box-content outline-none block w-full mt-0"
+        class="
+          bg-gray-100
+          dark:bg-zinc-800
+          box-content
+          outline-none
+          block
+          w-full
+          mt-0
+          dark:text-zinc-300
+        "
         :class="[label ? 'pt-1 pb-1 h-6' : 'h-11']"
         :placeholder="calcPlaceholder"
         :type="password ? 'password' : 'text'"

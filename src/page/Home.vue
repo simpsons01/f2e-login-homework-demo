@@ -26,15 +26,15 @@ onMounted(() => {
   <div
     class="
       home
-      xl:container
       mx-auto
       min-h-[inherit]
       flex
       items-center
       justify-center
+      dark:bg-zinc-900
     "
   >
-    <div class="text-7xl welcome-text relative">
+    <div class="text-7xl welcome-text relative dark:text-zinc-300">
       {{ welcomeText }}
     </div>
   </div>
@@ -70,5 +70,9 @@ onMounted(() => {
   100% {
     opacity: 0;
   }
+}
+
+html.dark .welcome-text::before {
+  background-color: rgb(212, 212, 216);
 }
 </style>

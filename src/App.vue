@@ -1,11 +1,23 @@
 <script setup>
-import { UserCircleIcon, Squares2X2Icon } from "@heroicons/vue/24/solid";
+import {
+  UserCircleIcon,
+  Squares2X2Icon,
+  SunIcon,
+  MoonIcon,
+} from "@heroicons/vue/24/solid";
 import Loading from "./components/Loading.vue";
 import Modal from "./components/Modal.vue";
-import { provide, reactive, ref, onBeforeMount } from "vue";
+import { provide, reactive, ref, onBeforeMount, onMounted } from "vue";
 import * as EventBus from "./common/eventbus";
 
 import { useUserStore } from "./store/user";
+
+const theme = {
+  dark: "dark",
+  light: "light",
+};
+
+const currentTheme = ref(theme.light);
 
 const userStore = useUserStore();
 
@@ -59,6 +71,28 @@ const landingEventUnRegister = EventBus.register(
   }
 );
 
+const updateTheme = (payload) => {
+  console.log(payload);
+  currentTheme.value = payload;
+  localStorage.setItem("theme", JSON.stringify(payload));
+  if (payload === theme.dark) {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+};
+
+onMounted(() => {
+  const storeTheme = (() => {
+    const _ = localStorage.getItem("theme");
+
+    return !_ ? _ : JSON.parse(_);
+  })();
+  if (storeTheme) {
+    updateTheme(storeTheme);
+  }
+});
+
 onBeforeMount(() => {
   landingEventUnRegister();
 });
@@ -73,6 +107,7 @@ onBeforeMount(() => {
         border-solid
         h-16
         border-gray-200
+        dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-600
         fixed
         top-0
         w-full
@@ -87,7 +122,28 @@ onBeforeMount(() => {
             <Squares2X2Icon class="h-12 w-12" />
           </router-link>
         </div>
-        <div class="flex-auto flex flex-row-reverse">
+        <div class="flex-auto flex justify-end">
+          <div class="flex-initial flex items-center mr-2">
+            <button
+              @click="
+                () => {
+                  updateTheme(
+                    currentTheme === theme.light ? theme.dark : theme.light
+                  );
+                }
+              "
+              class="block"
+            >
+              <sun-icon
+                v-show="currentTheme === theme.light"
+                class="h-10 w-10 text-black"
+              />
+              <moon-icon
+                v-show="currentTheme === theme.dark"
+                class="h-8 w-8 text-zinc-300"
+              />
+            </button>
+          </div>
           <div v-if="userStore.isLogin" class="flex-initial flex items-center">
             <router-link class="block" to="/account">
               <user-circle-icon class="h-12 w-12" />
@@ -96,10 +152,15 @@ onBeforeMount(() => {
         </div>
       </div>
     </header>
-    <main>
+    <main class="dark:bg-zinc-900">
       <router-view />
     </main>
-    <footer class="bg-gray-100">
+    <footer
+      class="
+        bg-gray-100
+        dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-600 dark:border-t
+      "
+    >
       <div
         class="
           xl:container
@@ -130,10 +191,11 @@ onBeforeMount(() => {
       items-center
       justify-center
       bg-white
+      dark:bg-zinc-900
       landing
     "
   >
-    <Squares2X2Icon class="icon h-24 w-24" />
+    <Squares2X2Icon class="icon h-24 w-24 dark:text-slate-300" />
   </div>
 </template>
 

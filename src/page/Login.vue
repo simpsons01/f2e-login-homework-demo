@@ -146,7 +146,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="login min-h-[inherit] relative">
+  <div class="login dark:bg-stone-900 min-h-[inherit] relative">
     <div
       class="
         wrapper
@@ -159,11 +159,12 @@ onBeforeUnmount(() => {
         top-[10%]
         left-1/2
         -translate-x-2/4
+        dark:shadow-zinc-700
       "
     >
       <div class="flex">
         <div class="flex-auto p-16">
-          <h3 class="m-0 text-2xl">登入</h3>
+          <h3 class="m-0 text-2xl dark:text-zinc-300">登入</h3>
           <div class="mt-6">
             <form-text-input
               :error="formV$.account.$error"
@@ -192,20 +193,42 @@ onBeforeUnmount(() => {
             />
             <button
               @click="forgetPasswordModal.show = true"
-              class="underline underline-offset-1 cursor-pointer"
+              class="
+                underline underline-offset-1
+                cursor-pointer
+                dark:text-zinc-300
+              "
             >
               忘記密碼?
             </button>
           </div>
           <div class="mt-6">
-            <button @click="submit" class="btn w-full text-white bg-black">
+            <button
+              @click="submit"
+              class="
+                btn
+                w-full
+                text-white
+                bg-black
+                dark:bg-zinc-300 dark:text-black
+              "
+            >
               登入
             </button>
           </div>
         </div>
-        <div class="divider basis-[1px] bg-gray-300" />
+        <div class="divider basis-[1px] bg-gray-300 dark:bg-zinc-600" />
         <div class="flex-auto flex justify-center items-center">
-          <router-link to="/register" class="btn bg-black text-white px-16 py-4"
+          <router-link
+            to="/register"
+            class="
+              btn
+              bg-black
+              text-white
+              px-16
+              py-4
+              dark:bg-zinc-300 dark:text-black
+            "
             >加入會員</router-link
           >
         </div>
@@ -248,7 +271,19 @@ onBeforeUnmount(() => {
     }"
   >
     <template v-slot:content>
-      <div class="my-8 mx-4 py-4 text-center text-2xl bg-black text-white">
+      <div
+        class="
+          my-8
+          mx-4
+          py-4
+          text-center
+          rounded
+          text-2xl
+          bg-black
+          text-white
+          dark:text-zinc-200
+        "
+      >
         {{ newPasswordModal.newPassword }}
       </div>
     </template>

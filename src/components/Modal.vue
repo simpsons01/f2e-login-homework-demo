@@ -42,6 +42,7 @@ const props = defineProps({
         items-center
         justify-center
         bg-black/60
+        dark:bg-zinc-400/60
         backdrop
       "
     >
@@ -49,6 +50,7 @@ const props = defineProps({
         class="
           relative
           bg-white
+          dark:bg-zinc-900
           p-4
           min-w-[500px] min-h-[200px]
           rounded-lg
@@ -70,19 +72,20 @@ const props = defineProps({
               left-1/2
               top-1/2
               -translate-y-2/4 -translate-x-2/4
+              dark:text-zinc-200
             "
           />
         </div>
         <slot name="title" v-bind="{ title }">
           <div
-            class="text-2xl text-black"
+            class="text-2xl text-black dark:text-zinc-200"
             :class="[onCloseIconClick ? 'mt-3' : '']"
           >
             {{ title }}
           </div>
         </slot>
         <slot name="content">
-          <div class="flex-auto p-2" v-bind="{ content }">
+          <div class="flex-auto p-2 dark:text-zinc-200" v-bind="{ content }">
             {{ content }}
           </div>
         </slot>
@@ -90,14 +93,22 @@ const props = defineProps({
           <div v-if="cancel || confirm" class="text-center">
             <button
               v-if="cancel"
-              class="btn text-white px-8 py-2 bg-gray-400 mr-2"
+              class="
+                btn
+                text-white
+                px-8
+                py-2
+                bg-gray-400
+                mr-2
+                dark:bg-zinc-600 dark:text-zinc-300
+              "
               @click="($event) => cancel.handler($event)"
             >
               {{ cancel.text }}
             </button>
             <button
               v-if="confirm"
-              class="btn text-white px-8 py-2 bg-black"
+              class="btn text-white px-8 py-2 bg-black dark:text-zinc-200"
               @click="($event) => confirm.handler($event)"
             >
               {{ confirm.text }}
