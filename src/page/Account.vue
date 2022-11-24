@@ -17,8 +17,6 @@ const router = useRouter();
 
 const userStore = useUserStore();
 
-console.log(userStore);
-
 const loading = inject("loading");
 
 const alert = inject("alert");

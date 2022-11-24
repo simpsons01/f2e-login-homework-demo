@@ -87,7 +87,6 @@ export const useUserStore = defineStore('user', {
       return withHandleError(http.patch("/user/reset-password", {
         email,
       }).then(res => {
-        console.log(res)
         const {
           data: {
             data: {
