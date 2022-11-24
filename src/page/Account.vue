@@ -92,7 +92,11 @@ const onLogoutClick = async () => {
     router.push({ path: "/login" });
   } catch (error) {
     loading.hide();
-    alert.open(error.data.message);
+    if (error.data.statusCode === errorCode.unauthorized) {
+      router.push({ path: "/login" });
+    } else {
+      alert.open(error.data.message);
+    }
   }
 };
 </script>
