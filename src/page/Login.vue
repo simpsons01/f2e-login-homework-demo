@@ -146,7 +146,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="login dark:bg-stone-900 min-h-[inherit] relative">
+  <div class="login min-h-[inherit] relative">
     <div
       class="
         wrapper

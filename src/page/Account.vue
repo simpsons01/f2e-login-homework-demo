@@ -100,7 +100,7 @@ const onLogoutClick = async () => {
 </script>
 
 <template>
-  <div class="account xl:container mx-auto dark:bg-zinc-900">
+  <div class="account xl:container mx-auto">
     <div class="px-12 py-8 flex">
       <div class="basis-40 pr-4">
         <h3 class="text-gray-600 text-2xl dark:text-zinc-200">我的帳戶</h3>

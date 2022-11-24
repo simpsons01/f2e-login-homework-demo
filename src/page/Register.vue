@@ -173,7 +173,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="register dark:bg-stone-900 min-h-[inherit] relative">
+  <div class="register min-h-[inherit] relative">
     <div
       class="
         wrapper
@@ -270,7 +270,7 @@ onBeforeUnmount(() => {
                 class="
                   bg-gray-300
                   text-black
-                  dark:bg-stone-800 dark:text-zinc-300
+                  dark:bg-zinc-800 dark:text-zinc-300
                   rounded-sm
                   p-2
                   text-center
